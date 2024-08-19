@@ -6,6 +6,11 @@ const HABBIT_KEY = 'HABBIT_KEY';
 /* page */
 const page = {
     menu: document.querySelector('.menu__list'),
+    header: {
+        h1: document.querySelector('.h1'),
+        progressPrecent: document.querySelector('.progress__precent'),
+        progressCoverBar: document.querySelector('.progress__cover-bar'),
+    }
 }
 
 /* utils */
@@ -53,9 +58,24 @@ function rerenderMenu(activeHabbit) {
 
 }
 
+function reranderHead(activeHabbit) {
+    if (!activeHabbit) {
+        return;
+    }
+    page.header.h1.innerText = activeHabbit.name;
+    const progress = activeHabbit.days.length / activeHabbit.target > 1
+    ? 100
+    : activeHabbit.days.length / activeHabbit.target * 100;
+    
+    page.header.progressCoverBar.style.width = `${progress.toFixed(0)}%`; // округлить до целого
+    page.header.progressPrecent.innerText = `${progress} %`;
+}
+
+
 function rerander(activeHabbitId) {
     const activeHabbit = habbits.find(habbit => habbit.id === activeHabbitId);
     rerenderMenu(activeHabbit);
+    reranderHead(activeHabbit);
  
 }
 
