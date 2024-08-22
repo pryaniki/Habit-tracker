@@ -11,7 +11,11 @@ const page = {
         progressPrecent: document.querySelector('.progress__precent'),
         progressCoverBar: document.querySelector('.progress__cover-bar'),
     },
-    content: document.querySelector('.list'),
+    content: {
+        daysContainer: document.getElementById('days'),
+        nextDay: document.querySelector('.habbit__day'),
+    }
+    
 }
 
 /* utils */
@@ -28,16 +32,12 @@ function setData() {
     localStorage.setItem(HABBIT_KEY, JSON.stringify(habbits));
 }
 
-function removeComment(habbitId, index) {
-    delete localStorage.HABBIT_KEY.habbitId.days.index;
-}
+// function removeComment(habbitId, index) {
+//     delete localStorage.HABBIT_KEY.habbitId.days.index;
+// }
 
 /* render */
 function rerenderMenu(activeHabbit) {
-    if (!activeHabbit) {
-        return;
-    }
-
     for (const habbit of habbits) {
         const existed = document.querySelector(`[menu-habbit-id="${habbit.id}"]`);
         // console.log(existed);
@@ -64,9 +64,6 @@ function rerenderMenu(activeHabbit) {
 }
 
 function reranderHead(activeHabbit) {
-    if (!activeHabbit) {
-        return;
-    }
     page.header.h1.innerText = activeHabbit.name;
     const progress = activeHabbit.days.length / activeHabbit.target > 1
     ? 100
@@ -77,36 +74,32 @@ function reranderHead(activeHabbit) {
 }
 
 function reranderContent(activeHabbit) {
-    if (!activeHabbit) {
-        return;
-    }
-    page.content.innerHTML = '';
+    page.content.daysContainer.innerHTML = '';
 
     for (const [i, data] of activeHabbit.days.entries()) {
         const currentDay = i + 1;
-        console.log(`День ${i+1}: ${data.comment}`);
         const element = document.createElement('div');
         element.classList.add('habbit');
-        element.setAttribute('day-number', currentDay);
         element.innerHTML = `<div class="habbit__day">День ${currentDay}</div>
-        <div class="habbit__comment">${data.comment}</div>`;
+        <div class="habbit__comment">${data.comment}</div>
+        <button class="habbit__delete">
+            <img src="images/icons/delete.svg" alt="Удалить День ${currentDay}">
+        </button>`;
 
-        const deliteButton = document.createElement('button');
-        deliteButton.classList.add('habbit__delete');
-        deliteButton.innerHTML = `<img src="images/icons/delete.svg" alt="Удалить День ${currentDay}">`;
-        // deliteButton.addEventListener('click', () => 
-        //     removeComment(activeHabbit.id, i)
-        // );
-
-        element.appendChild(deliteButton);
-
-        page.content.appendChild(element);
+        page.content.daysContainer.appendChild(element);
     }
+
+    page.content.nextDay.innerText = `День ${activeHabbit.days.length + 1}`;
 
 }
 
 function rerander(activeHabbitId) {
     const activeHabbit = habbits.find(habbit => habbit.id === activeHabbitId);
+
+    if (!activeHabbit) {
+        return;
+    }
+
     rerenderMenu(activeHabbit);
     reranderHead(activeHabbit);
     reranderContent(activeHabbit);
