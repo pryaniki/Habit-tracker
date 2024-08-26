@@ -105,6 +105,17 @@ function rerander(activeHabbitId) {
     reranderContent(activeHabbit);
  
 }
+/* work with days*/
+function addDay(event) {
+    event.preventDefault(); // уберет дефолтное поведение формы.Т.е. отправку данных
+    console.log(event);
+
+    const data = new FormData(event.target); // передаем форму
+    let comment = data.get("comment");
+    console.log(comment);
+
+
+}
 
 /* init */
 (() => {
