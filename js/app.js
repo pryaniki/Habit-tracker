@@ -2,6 +2,7 @@
 
 let habbits = [];
 const HABBIT_KEY = 'HABBIT_KEY';
+let activeHabbitId;
  
 /* page */
 const page = {
@@ -28,7 +29,7 @@ function loadData() {
     }
 }
 
-function setData() {
+function saveData() {
     localStorage.setItem(HABBIT_KEY, JSON.stringify(habbits));
 }
 
@@ -74,6 +75,8 @@ function reranderHead(activeHabbit) {
 }
 
 function reranderContent(activeHabbit) {
+    activeHabbitId = activeHabbit.id;
+
     page.content.daysContainer.innerHTML = '';
 
     for (const [i, data] of activeHabbit.days.entries()) {
@@ -107,13 +110,37 @@ function rerander(activeHabbitId) {
 }
 /* work with days*/
 function addDay(event) {
+    const form = event.target;
     event.preventDefault(); // уберет дефолтное поведение формы.Т.е. отправку данных
-    console.log(event);
 
-    const data = new FormData(event.target); // передаем форму
-    let comment = data.get("comment");
-    console.log(comment);
+    const data = new FormData(form); // передаем форму
+    const comment = data.get("comment");
+    
+    const input = document.querySelector('[name="comment"]');
 
+    form['comment'].classList.remove('error');
+
+    if (!comment) {
+        console.log(form);
+        console.log(input);
+        input.classList.add('error');
+        form['comment'].classList.add('error');
+    }
+    console.log(habbits);
+    habbits = habbits.map(habbit => {
+        if (habbit.id === activeHabbitId) {
+            return {
+                ...habbit,
+                days: habbit.days.concat({ comment })
+            }
+        }
+        return habbit;
+    });
+    console.log(habbits);
+
+    form['comment']['value'] = '';
+    rerander(activeHabbitId);
+    saveData();
 
 }
 
