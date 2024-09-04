@@ -2,7 +2,7 @@
 
 let habbits = [];
 const HABBIT_KEY = 'HABBIT_KEY';
-let activeHabbitId;
+let globalActiveHabbitId;
  
 /* page */
 const page = {
@@ -33,9 +33,24 @@ function saveData() {
     localStorage.setItem(HABBIT_KEY, JSON.stringify(habbits));
 }
 
-// function removeComment(habbitId, index) {
-//     delete localStorage.HABBIT_KEY.habbitId.days.index;
-// }
+function removeDay(index) {
+    // let habbits = localStorage.getItem(HABBIT_KEY);
+
+    habbits = habbits.map(habbit => {
+        if (habbit.id === globalActiveHabbitId) {
+            console.log(habbit);
+            habbit.days.splice(index, 1); 
+            console.log(habbit);
+            return {
+                ...habbit,
+                days: habbit.days
+            }
+        }
+        return habbit;
+    });
+    rerander(globalActiveHabbitId);
+    saveData();
+}
 
 /* render */
 function rerenderMenu(activeHabbit) {
@@ -75,7 +90,7 @@ function reranderHead(activeHabbit) {
 }
 
 function reranderContent(activeHabbit) {
-    activeHabbitId = activeHabbit.id;
+    globalActiveHabbitId = activeHabbit.id;
 
     page.content.daysContainer.innerHTML = '';
 
@@ -85,7 +100,7 @@ function reranderContent(activeHabbit) {
         element.classList.add('habbit');
         element.innerHTML = `<div class="habbit__day">День ${currentDay}</div>
         <div class="habbit__comment">${data.comment}</div>
-        <button class="habbit__delete">
+        <button class="habbit__delete" onclick="removeDay(${i})">
             <img src="images/icons/delete.svg" alt="Удалить День ${currentDay}">
         </button>`;
 
@@ -96,8 +111,8 @@ function reranderContent(activeHabbit) {
 
 }
 
-function rerander(activeHabbitId) {
-    const activeHabbit = habbits.find(habbit => habbit.id === activeHabbitId);
+function rerander(globalActiveHabbitId) {
+    const activeHabbit = habbits.find(habbit => habbit.id === globalActiveHabbitId);
 
     if (!activeHabbit) {
         return;
@@ -125,23 +140,22 @@ function addDay(event) {
         console.log(input);
         input.classList.add('error');
         form['comment'].classList.add('error');
-    }
-    console.log(habbits);
-    habbits = habbits.map(habbit => {
-        if (habbit.id === activeHabbitId) {
-            return {
-                ...habbit,
-                days: habbit.days.concat({ comment })
+    } else {
+        habbits = habbits.map(habbit => {
+            if (habbit.id === globalActiveHabbitId) {
+                return {
+                    ...habbit,
+                    days: habbit.days.concat({ comment })
+                }
             }
-        }
-        return habbit;
-    });
-    console.log(habbits);
-
-    form['comment']['value'] = '';
-    rerander(activeHabbitId);
-    saveData();
-
+            return habbit;
+        });
+    
+        form['comment']['value'] = '';
+        rerander(globalActiveHabbitId);
+        saveData();
+    }
+  
 }
 
 /* init */
