@@ -15,6 +15,9 @@ const page = {
     content: {
         daysContainer: document.getElementById('days'),
         nextDay: document.querySelector('.habbit__day'),
+    },
+    popup: {
+        index: document.getElementById('add-habbit-popup'),
     }
     
 }
@@ -50,6 +53,16 @@ function removeDay(index) {
     });
     rerander(globalActiveHabbitId);
     saveData();
+}
+
+function togglePopup() {
+    const popup = page.popup.index;
+    const className = 'cover_hidden';
+    if (popup.classList.contains(className)) {
+        popup.classList.remove(className);
+    } else {
+        popup.classList.add(className);
+    }
 }
 
 /* render */
@@ -163,3 +176,4 @@ function addDay(event) {
     loadData();
     rerander(habbits[0].id)
 })();
+
