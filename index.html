@@ -67,18 +67,19 @@
                 <h2>Новая привычка</h2>
                 <div class="icon-label">Иконка</div>
                 <div class="icon-select">
-                    <button class="icon icon_active">
+                    <button class="icon icon_active" onclick="setIcon(this, 'food')">
                         <img src="/images/icons/Food.svg" alt="Еда">
                     </button>
-                    <button class="icon">
+                    <button class="icon" onclick="setIcon(this, 'water')">
                         <img src="/images/icons/Water.svg" alt="Вода">
                     </button>
-                    <button class="icon">
+                    <button class="icon" onclick="setIcon(this, 'sport')">
                         <img src="/images/icons/Dumbbell.svg" alt="Спорт">
                     </button>
                 </div>
                 <form class="popup__form">
                     <input type="text" name="name" placeholder="Название">
+                    <input type="text" name="icon" hidden placeholder="Иконка" value="sport">
                     <input type="number" name="target" placeholder="Цель">
                     <button class="button" type="submit">Добавить</button>
                 </form>

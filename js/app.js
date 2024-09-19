@@ -18,9 +18,11 @@ const page = {
     },
     popup: {
         index: document.getElementById('add-habbit-popup'),
+        iconField: document.querySelector('.popup__form input[name="icon"]'),
     }
     
 }
+
 
 /* utils */
 
@@ -171,9 +173,19 @@ function addDay(event) {
   
 }
 
+/* working with habbits */
+
+function setIcon(context, icon){
+    const activeIcon = document.querySelector('.icon.icon_active');
+    activeIcon.classList.remove('icon_active');
+     
+    context.classList.add('icon_active');
+    page.popup.iconField.value = icon;
+}
+
 /* init */
 (() => {
     loadData();
-    rerander(habbits[0].id)
+    rerander(habbits[0].id);
 })();
 
