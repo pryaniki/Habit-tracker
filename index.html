@@ -77,11 +77,11 @@
                         <img src="/images/icons/Dumbbell.svg" alt="Спорт">
                     </button>
                 </div>
-                <form class="popup__form">
+                <form class="popup__form" onsubmit="addHabbit(event)">
                     <input type="text" name="name" placeholder="Название">
                     <input type="text" name="icon" hidden placeholder="Иконка" value="sport">
                     <input type="number" name="target" placeholder="Цель">
-                    <button class="button" type="submit">Добавить</button>
+                    <button class="button">Добавить</button>
                 </form>
                 <button class="popup__close" onclick="togglePopup()">
                     <img src="images/icons/close.svg" alt="Закрыть">

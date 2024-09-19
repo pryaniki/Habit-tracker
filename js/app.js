@@ -67,6 +67,27 @@ function togglePopup() {
     }
 }
 
+// function validateForm(form, fields) {
+//     const formData = new FormData(form); // передаем форму
+    
+//     const nameInput = form.querySelector('[name="name"]');
+//     const iconInput = form.querySelector('[name="icon"]');
+//     const targetInput = form.querySelector('[name="target"]');
+
+//     const name = nameInput.value;
+//     const icon = iconInput.value;
+//     const target = targetInput.value;
+
+//     form['name'].classList.remove('error');
+//     form['target'].classList.remove('error');
+
+//     if (!name) {
+//         nameInput.classList.add('error');
+//         form['name'].classList.add('error');
+//     } 
+//     if (!target) {
+// }
+
 /* render */
 function rerenderMenu(activeHabbit) {
     for (const habbit of habbits) {
@@ -174,6 +195,64 @@ function addDay(event) {
 }
 
 /* working with habbits */
+function addHabbit(event) {
+    const form = event.target;
+    event.preventDefault(); // уберет дефолтное поведение формы.Т.е. отправку данных
+  
+    const data = new FormData(form); // передаем форму
+    
+    const nameInput = form.querySelector('[name="name"]');
+    const iconInput = form.querySelector('[name="icon"]');
+    const targetInput = form.querySelector('[name="target"]');
+
+    const name = nameInput.value;
+    const icon = iconInput.value;
+    const target = targetInput.value;
+
+    form['name'].classList.remove('error');
+    form['target'].classList.remove('error');
+
+    if (!name) {
+        nameInput.classList.add('error');
+        form['name'].classList.add('error');
+    } 
+    if (!target) {
+        targetInput.classList.add('error');
+        form['target'].classList.add('error');
+    }
+    
+    if (name && target) {
+        console.log(habbits);
+
+        const habbit = {
+            id: habbits.length+1,
+            icon,
+            name,
+            target,
+            days: []
+        };
+        console.log(habbit);
+        habbits.push(habbit);
+        console.log(habbits);
+
+        // habbits = habbits.map(habbit => {
+        //     if (habbit.id === globalActiveHabbitId) {
+        //         return {
+        //             ...habbit,
+        //             days: habbit.days.concat({ comment })
+        //         }
+        //     }
+        //     return habbit;
+        // });
+    
+        nameInput.value = '';
+        // iconInput.value = '';
+        targetInput.value = '';
+        globalActiveHabbitId = habbits.length;
+        rerander(globalActiveHabbitId);
+        saveData();
+    }
+}
 
 function setIcon(context, icon){
     const activeIcon = document.querySelector('.icon.icon_active');
