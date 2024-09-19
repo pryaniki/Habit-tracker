@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "icon": "Dumbbell",
+        "icon": "sport",
         "name": "Отжимания",
         "target": 10,
         "days": [

@@ -18,7 +18,7 @@ const page = {
     },
     popup: {
         index: document.getElementById('add-habbit-popup'),
-        iconField: document.querySelector('.popup__form input[name="icon"]'),
+        iconField: document.querySelector('.popup__form input[name="icon"]')
     }
     
 }
@@ -43,9 +43,7 @@ function removeDay(index) {
 
     habbits = habbits.map(habbit => {
         if (habbit.id === globalActiveHabbitId) {
-            console.log(habbit);
             habbit.days.splice(index, 1); 
-            console.log(habbit);
             return {
                 ...habbit,
                 days: habbit.days
@@ -67,32 +65,39 @@ function togglePopup() {
     }
 }
 
-// function validateForm(form, fields) {
-//     const formData = new FormData(form); // передаем форму
+function resetForm(form, fields) {
+    for (const field of fields) {
+        form[field].value = '';
+    }
+}
+
+function validateAndGetFormData(form, fields) {
+    const formData = new FormData(form); // передаем форму
+    const res = {};
+
+    for (const field of fields) {
+        const fieldValue = formData.get(field);
+        form[field].classList.remove('error');
+        if (!fieldValue) {
+            form[field].classList.add('error');
+        }
+        res[field] = fieldValue;
+    }
     
-//     const nameInput = form.querySelector('[name="name"]');
-//     const iconInput = form.querySelector('[name="icon"]');
-//     const targetInput = form.querySelector('[name="target"]');
+    let isValid = true;
+    for (const field of fields) {
+        if (!res[field]) {
+            return;
+        }
+    }
 
-//     const name = nameInput.value;
-//     const icon = iconInput.value;
-//     const target = targetInput.value;
-
-//     form['name'].classList.remove('error');
-//     form['target'].classList.remove('error');
-
-//     if (!name) {
-//         nameInput.classList.add('error');
-//         form['name'].classList.add('error');
-//     } 
-//     if (!target) {
-// }
+    return res;
+}
 
 /* render */
 function rerenderMenu(activeHabbit) {
     for (const habbit of habbits) {
         const existed = document.querySelector(`[menu-habbit-id="${habbit.id}"]`);
-        // console.log(existed);
         if (!existed) {
             // создание
             const element = document.createElement('button');
@@ -161,97 +166,65 @@ function rerander(globalActiveHabbitId) {
 }
 /* work with days*/
 function addDay(event) {
-    const form = event.target;
     event.preventDefault(); // уберет дефолтное поведение формы.Т.е. отправку данных
+    const form = event.target;
+    const fields = ['comment'];
+    const data = validateAndGetFormData(form, fields);
 
-    const data = new FormData(form); // передаем форму
-    const comment = data.get("comment");
-    
-    const input = document.querySelector('[name="comment"]');
-
-    form['comment'].classList.remove('error');
-
-    if (!comment) {
-        console.log(form);
-        console.log(input);
-        input.classList.add('error');
-        form['comment'].classList.add('error');
-    } else {
-        habbits = habbits.map(habbit => {
-            if (habbit.id === globalActiveHabbitId) {
-                return {
-                    ...habbit,
-                    days: habbit.days.concat({ comment })
-                }
-            }
-            return habbit;
-        });
-    
-        form['comment']['value'] = '';
-        rerander(globalActiveHabbitId);
-        saveData();
+    if (!data) {
+        return;
     }
+
+    habbits = habbits.map(habbit => {
+        if (habbit.id === globalActiveHabbitId) {
+            return {
+                ...habbit,
+                days: habbit.days.concat({ comment: data.comment })
+            }
+        }
+        return habbit;
+    });
+
+    resetForm(form, fields);
+    rerander(globalActiveHabbitId);
+    saveData();
   
 }
 
 /* working with habbits */
 function addHabbit(event) {
-    const form = event.target;
     event.preventDefault(); // уберет дефолтное поведение формы.Т.е. отправку данных
-  
-    const data = new FormData(form); // передаем форму
+
+    const form = event.target;
+    const fields = ['name', 'icon', 'target'];
     
-    const nameInput = form.querySelector('[name="name"]');
-    const iconInput = form.querySelector('[name="icon"]');
-    const targetInput = form.querySelector('[name="target"]');
-
-    const name = nameInput.value;
-    const icon = iconInput.value;
-    const target = targetInput.value;
-
-    form['name'].classList.remove('error');
-    form['target'].classList.remove('error');
-
-    if (!name) {
-        nameInput.classList.add('error');
-        form['name'].classList.add('error');
-    } 
-    if (!target) {
-        targetInput.classList.add('error');
-        form['target'].classList.add('error');
+    const data = validateAndGetFormData(form, fields);
+    if (!data) {
+        return;
     }
     
-    if (name && target) {
-        console.log(habbits);
 
-        const habbit = {
-            id: habbits.length+1,
-            icon,
-            name,
-            target,
-            days: []
-        };
-        console.log(habbit);
-        habbits.push(habbit);
-        console.log(habbits);
 
-        // habbits = habbits.map(habbit => {
-        //     if (habbit.id === globalActiveHabbitId) {
-        //         return {
-        //             ...habbit,
-        //             days: habbit.days.concat({ comment })
-        //         }
-        //     }
-        //     return habbit;
-        // });
+    const maxId = habbits.reduce((acc, habbit) => acc > habbit.id ? acc : habbit.id, 0);
+    const habbitId = maxId + 1;
+
+    const habbit = {
+        id: habbitId,
+        icon: data.icon,
+        name: data.name,
+        target: data.target,
+        days: []
+    };
+
+    habbits.push(habbit);
+
+
+    globalActiveHabbitId = habbitId;
     
-        nameInput.value = '';
-        // iconInput.value = '';
-        targetInput.value = '';
-        globalActiveHabbitId = habbits.length;
-        rerander(globalActiveHabbitId);
-        saveData();
-    }
+    resetForm(form, ['name', 'target']);
+    togglePopup();
+    rerander(globalActiveHabbitId);
+    saveData();
 }
 
 function setIcon(context, icon){
@@ -260,6 +233,7 @@ function setIcon(context, icon){
      
     context.classList.add('icon_active');
     page.popup.iconField.value = icon;
+
 }
 
 /* init */
