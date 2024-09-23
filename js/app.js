@@ -158,7 +158,7 @@ function rerander(globalActiveHabbitId) {
     if (!activeHabbit) {
         return;
     }
-
+    document.location.replace(document.location.pathname + '#' + globalActiveHabbitId)
     rerenderMenu(activeHabbit);
     reranderHead(activeHabbit);
     reranderContent(activeHabbit);
@@ -239,6 +239,13 @@ function setIcon(context, icon){
 /* init */
 (() => {
     loadData();
-    rerander(habbits[0].id);
+    const hashId = Number(document.location.hash.replace('#', ''));
+    const urlHabbit = habbits.find(habbit => habbit.id == hashId);
+
+    if (!urlHabbit){
+        rerander(habbits[0].id);
+    } else {
+        rerander(urlHabbit.id);
+    }
 })();
 
