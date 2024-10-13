@@ -1,8 +1,8 @@
 'use strict';
 
-let habbits = [];
-const HABBIT_KEY = 'HABBIT_KEY';
-let globalActiveHabbitId;
+let habits = [];
+const HABIT_KEY = 'HABIT_KEY';
+let globalActiveHabitId;
  
 /* page */
 const page = {
@@ -14,10 +14,10 @@ const page = {
     },
     content: {
         daysContainer: document.getElementById('days'),
-        nextDay: document.querySelector('.habbit__day'),
+        nextDay: document.querySelector('.habit__day'),
     },
     popup: {
-        index: document.getElementById('add-habbit-popup'),
+        index: document.getElementById('add-habit-popup'),
         iconField: document.querySelector('.popup__form input[name="icon"]')
     }
     
@@ -27,31 +27,31 @@ const page = {
 /* utils */
 
 function loadData() {
-    const habbitString = localStorage.getItem(HABBIT_KEY);
-    const habbitArray = JSON.parse(habbitString);
-    if (Array.isArray(habbitArray)) {
-        habbits = habbitArray;
+    const habitString = localStorage.getItem(HABIT_KEY);
+    const habitArray = JSON.parse(habitString);
+    if (Array.isArray(habitArray)) {
+        habits = habitArray;
     }
 }
 
 function saveData() {
-    localStorage.setItem(HABBIT_KEY, JSON.stringify(habbits));
+    localStorage.setItem(HABIT_KEY, JSON.stringify(habits));
 }
 
 function removeDay(index) {
-    // let habbits = localStorage.getItem(HABBIT_KEY);
+    // let habits = localStorage.getItem(HABIT_KEY);
 
-    habbits = habbits.map(habbit => {
-        if (habbit.id === globalActiveHabbitId) {
-            habbit.days.splice(index, 1); 
+    habits = habits.map(habit => {
+        if (habit.id === globalActiveHabitId) {
+            habit.days.splice(index, 1); 
             return {
-                ...habbit,
-                days: habbit.days
+                ...habit,
+                days: habit.days
             }
         }
-        return habbit;
+        return habit;
     });
-    rerander(globalActiveHabbitId);
+    rerander(globalActiveHabitId);
     saveData();
 }
 
@@ -95,23 +95,23 @@ function validateAndGetFormData(form, fields) {
 }
 
 /* render */
-function rerenderMenu(activeHabbit) {
-    for (const habbit of habbits) {
-        const existed = document.querySelector(`[menu-habbit-id="${habbit.id}"]`);
+function rerenderMenu(activeHabit) {
+    for (const habit of habits) {
+        const existed = document.querySelector(`[menu-habit-id="${habit.id}"]`);
         if (!existed) {
             // создание
             const element = document.createElement('button');
-            element.setAttribute('menu-habbit-id', habbit.id);
+            element.setAttribute('menu-habit-id', habit.id);
             element.classList.add('menu__item');
-            element.addEventListener('click', () => rerander(habbit.id));
-            element.innerHTML = `<img src="images/icons/${habbit.icon}.svg" alt="${habbit.name}">`;
-            if (activeHabbit.id === habbit.id) {
+            element.addEventListener('click', () => rerander(habit.id));
+            element.innerHTML = `<img src="images/icons/${habit.icon}.svg" alt="${habit.name}">`;
+            if (activeHabit.id === habit.id) {
                 element.classList.add('menu__item_active');
             }
             page.menu.appendChild(element);
             continue;
         }
-        if (activeHabbit.id === habbit.id) {
+        if (activeHabit.id === habit.id) {
             existed.classList.add('menu__item_active');
         } else {
             existed.classList.remove('menu__item_active');
@@ -120,48 +120,48 @@ function rerenderMenu(activeHabbit) {
 
 }
 
-function reranderHead(activeHabbit) {
-    page.header.h1.innerText = activeHabbit.name;
-    const progress = activeHabbit.days.length / activeHabbit.target > 1
+function reranderHead(activeHabit) {
+    page.header.h1.innerText = activeHabit.name;
+    const progress = activeHabit.days.length / activeHabit.target > 1
     ? 100
-    : activeHabbit.days.length / activeHabbit.target * 100;
+    : activeHabit.days.length / activeHabit.target * 100;
     
     page.header.progressCoverBar.style.width = `${progress.toFixed(0)}%`; // округлить до целого
-    page.header.progressPrecent.innerText = `${progress} %`;
+    page.header.progressPrecent.innerText = `${progress.toFixed(0)} %`;
 }
 
-function reranderContent(activeHabbit) {
-    globalActiveHabbitId = activeHabbit.id;
+function reranderContent(activeHabit) {
+    globalActiveHabitId = activeHabit.id;
 
     page.content.daysContainer.innerHTML = '';
 
-    for (const [i, data] of activeHabbit.days.entries()) {
+    for (const [i, data] of activeHabit.days.entries()) {
         const currentDay = i + 1;
         const element = document.createElement('div');
-        element.classList.add('habbit');
-        element.innerHTML = `<div class="habbit__day">День ${currentDay}</div>
-        <div class="habbit__comment">${data.comment}</div>
-        <button class="habbit__delete" onclick="removeDay(${i})">
+        element.classList.add('habit');
+        element.innerHTML = `<div class="habit__day">День ${currentDay}</div>
+        <div class="habit__comment">${data.comment}</div>
+        <button class="habit__delete" onclick="removeDay(${i})">
             <img src="images/icons/delete.svg" alt="Удалить День ${currentDay}">
         </button>`;
 
         page.content.daysContainer.appendChild(element);
     }
 
-    page.content.nextDay.innerText = `День ${activeHabbit.days.length + 1}`;
+    page.content.nextDay.innerText = `День ${activeHabit.days.length + 1}`;
 
 }
 
-function rerander(globalActiveHabbitId) {
-    const activeHabbit = habbits.find(habbit => habbit.id === globalActiveHabbitId);
+function rerander(globalActiveHabitId) {
+    const activeHabit = habits.find(habit => habit.id === globalActiveHabitId);
 
-    if (!activeHabbit) {
+    if (!activeHabit) {
         return;
     }
-    document.location.replace(document.location.pathname + '#' + globalActiveHabbitId)
-    rerenderMenu(activeHabbit);
-    reranderHead(activeHabbit);
-    reranderContent(activeHabbit);
+    document.location.replace(document.location.pathname + '#' + globalActiveHabitId)
+    rerenderMenu(activeHabit);
+    reranderHead(activeHabit);
+    reranderContent(activeHabit);
  
 }
 /* work with days*/
@@ -175,24 +175,24 @@ function addDay(event) {
         return;
     }
 
-    habbits = habbits.map(habbit => {
-        if (habbit.id === globalActiveHabbitId) {
+    habits = habits.map(habit => {
+        if (habit.id === globalActiveHabitId) {
             return {
-                ...habbit,
-                days: habbit.days.concat({ comment: data.comment })
+                ...habit,
+                days: habit.days.concat({ comment: data.comment })
             }
         }
-        return habbit;
+        return habit;
     });
 
     resetForm(form, fields);
-    rerander(globalActiveHabbitId);
+    rerander(globalActiveHabitId);
     saveData();
   
 }
 
-/* working with habbits */
-function addHabbit(event) {
+/* working with habits */
+function addHabit(event) {
     event.preventDefault(); // уберет дефолтное поведение формы.Т.е. отправку данных
 
     const form = event.target;
@@ -205,25 +205,25 @@ function addHabbit(event) {
     
 
 
-    const maxId = habbits.reduce((acc, habbit) => acc > habbit.id ? acc : habbit.id, 0);
-    const habbitId = maxId + 1;
+    const maxId = habits.reduce((acc, habit) => acc > habit.id ? acc : habit.id, 0);
+    const habitId = maxId + 1;
 
-    const habbit = {
-        id: habbitId,
+    const habit = {
+        id: habitId,
         icon: data.icon,
         name: data.name,
         target: data.target,
         days: []
     };
 
-    habbits.push(habbit);
+    habits.push(habit);
 
 
-    globalActiveHabbitId = habbitId;
+    globalActiveHabitId = habitId;
     
     resetForm(form, ['name', 'target']);
     togglePopup();
-    rerander(globalActiveHabbitId);
+    rerander(globalActiveHabitId);
     saveData();
 }
 
@@ -240,12 +240,12 @@ function setIcon(context, icon){
 (() => {
     loadData();
     const hashId = Number(document.location.hash.replace('#', ''));
-    const urlHabbit = habbits.find(habbit => habbit.id == hashId);
+    const urlHabit = habits.find(habit => habit.id == hashId);
 
-    if (!urlHabbit){
-        rerander(habbits[0].id);
+    if (!urlHabit){
+        rerander(habits[0].id);
     } else {
-        rerander(urlHabbit.id);
+        rerander(urlHabit.id);
     }
 })();
 
